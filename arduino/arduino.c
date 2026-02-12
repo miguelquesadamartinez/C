@@ -75,31 +75,48 @@ int main() {
 
     printf("✓ Comando '%c' enviado (%lu bytes)\n", comando, bytesWritten);
     
-    // Esperar a que Arduino ejecute el comando
-    // (enciende LED + delay 1000ms + apaga LED + envía respuesta)
-    printf("Esperando respuesta del Arduino...\n");
-    Sleep(1500);  // Dar tiempo al Arduino para procesar
-
-    // Leer respuesta
-    bytesRead = 0;
-    if (ReadFile(hSerial, buffer, sizeof(buffer)-1, &bytesRead, NULL)) {
-        if (bytesRead > 0) {
-            buffer[bytesRead] = '\0';  // Terminar string
-            printf("\n=== RESPUESTA DEL ARDUINO ===\n");
-            printf("%s", buffer);
-            printf("=============================\n");
-            printf("✓ Recibidos %lu bytes\n", bytesRead);
-        } else {
-            printf("\n✗ No se recibió respuesta del Arduino\n");
-            printf("Posibles causas:\n");
-            printf("  1. Arduino no está enviando datos\n");
-            printf("  2. Código Arduino no cargado correctamente\n");
-            printf("  3. Velocidad (baud rate) diferente\n");
-            printf("  4. Puerto incorrecto\n");
+    // Leer respuestas del Arduino durante 2 minutos
+    printf("\n=== INICIANDO LECTURA CONTINUA (2 minutos) ===\n");
+    printf("Esperando datos del Arduino...\n\n");
+    
+    ULONGLONG startTime = GetTickCount64();
+    ULONGLONG duration = 120000;  // 2 minutos en milisegundos
+    ULONGLONG elapsedTime = 0;
+    int totalLecturas = 0;
+    
+    while (elapsedTime < duration) {
+        bytesRead = 0;
+        
+        if (ReadFile(hSerial, buffer, sizeof(buffer)-1, &bytesRead, NULL)) {
+            if (bytesRead > 0) {
+                buffer[bytesRead] = '\0';  // Terminar string
+                totalLecturas++;
+                
+                // Mostrar tiempo transcurrido y datos
+                elapsedTime = GetTickCount64() - startTime;
+                printf("[%02llu:%02llu.%03llu] ", 
+                       elapsedTime / 60000,           // minutos
+                       (elapsedTime / 1000) % 60,     // segundos
+                       elapsedTime % 1000);           // milisegundos
+                printf("%s", buffer);
+                
+                // Agregar salto de línea si no lo tiene
+                if (buffer[bytesRead-1] != '\n') {
+                    printf("\n");
+                }
+            }
         }
-    } else {
-        printf("\n✗ Error leyendo del puerto\n");
+        
+        // Pequeña pausa para no saturar la CPU
+        Sleep(10);
+        elapsedTime = GetTickCount64() - startTime;
     }
+    
+    printf("\n========================================\n");
+    printf("Lectura finalizada\n");
+    printf("Tiempo total: 2 minutos\n");
+    printf("Total de lecturas: %d\n", totalLecturas);
+    printf("========================================\n");
 
     printf("\n✓ Puerto cerrado\n");
     CloseHandle(hSerial);
