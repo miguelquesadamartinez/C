@@ -18,7 +18,7 @@ C/
 ├── arduino/               # Comunicación Arduino simple
 │   └── arduino.c
 ├── arduinoCodes/           # Códigos Arduino IDE
-├── main.c                  # Programa básico con ejemplos fundamentales
+├── multithreading.c        # Ejemplo de multithreading con números aleatorios
 ├── README.md               # Este archivo
 ├── README_SQL.md           # Documentación SQL detallada
 ├── README_SERIAL.md        # Documentación Serial detallada
@@ -146,26 +146,61 @@ char data = '1';                             // Cambiar '1' por tu comando
 
 ---
 
-### 3. **main.c** - Conceptos Fundamentales de C
+### 3. **multithreading.c** - Multithreading con Números Aleatorios
 
-Programa educativo que demuestra:
+Programa educativo que demuestra el uso de múltiples threads (hilos) en C usando la API de Windows.
 
-- ✓ Punteros y asignación dinámica de memoria (`malloc`, `free`)
-- ✓ Manejo de archivos (crear y leer archivos `.txt`)
-- ✓ Entrada de usuario con `fgets`
-- ✓ Strings y arrays de caracteres
+**Características:**
+
+- 🧵 Creación de múltiples threads simultáneos
+- 🎲 Generación de números aleatorios en cada thread
+- 🔒 Sincronización con Critical Sections
+- ⏱️ Delays aleatorios para simular trabajo
+- 📊 Visualización en tiempo real de la ejecución concurrente
+- ✓ Limpieza correcta de recursos
+
+**Conceptos demostrados:**
+
+- `CreateThread()` - Creación de threads
+- `WaitForMultipleObjects()` - Esperar múltiples threads
+- `CRITICAL_SECTION` - Sincronización de recursos compartidos
+- `EnterCriticalSection()` / `LeaveCriticalSection()` - Control de acceso
+- Paso de parámetros a threads mediante estructuras
+
+**¿Qué hace el programa?**
+
+Crea 4 threads que ejecutan simultáneamente. Cada thread:
+
+1. Genera 5 números aleatorios (1-100)
+2. Los muestra con un identificador único
+3. Tiene delays aleatorios para ver la concurrencia
+4. Avisa cuando termina
 
 **Compilar:**
 
 ```powershell
-gcc main.c -o main.exe
+gcc multithreading.c -o multithreading.exe
 ```
 
 **Ejecutar:**
 
 ```powershell
-.\main.exe
+.\multithreading.exe
 ```
+
+**Ejemplo de salida:**
+
+```
+Creando 4 threads...
+[Thread 1] Número 1: 58
+[Thread 3] Número 1: 65
+[Thread 2] Número 2: 93
+[Thread 4] Número 1: 68
+[Thread 1] Número 2: 97
+...
+```
+
+💡 **Nota educativa:** Los threads se ejecutan en paralelo, por eso los números no aparecen en orden secuencial. La Critical Section evita que las líneas de salida se mezclen.
 
 ---
 
