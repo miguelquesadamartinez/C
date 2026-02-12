@@ -229,7 +229,7 @@ SQLResult* ejecutarConsulta(SQLConnection *conn, const char *query) {
     
     SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
     
-    printf("✓ Consulta ejecutada: %d filas obtenidas\n", result->numRows);
+    printf("✓ Consulta ejecutada: %d filas obtenidas\n - SQL: %s\n", result->numRows, query);
     return result;
 }
 
@@ -263,7 +263,7 @@ int ejecutarComando(SQLConnection *conn, const char *comando) {
     SQLLEN rowCount;
     SQLRowCount(hStmt, &rowCount);
     
-    printf("✓ Comando ejecutado: %lld fila(s) afectada(s)\n", rowCount);
+    printf("✓ Comando ejecutado: %lld  fila(s) afectada(s)\n - SQL: %s\n", rowCount, comando);
     
     SQLFreeHandle(SQL_HANDLE_STMT, hStmt);
     return 1;
