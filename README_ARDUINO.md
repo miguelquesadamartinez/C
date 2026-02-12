@@ -56,6 +56,8 @@ cd arduino
 .\arduino.exe
 ```
 
+> ⚠️ **¿Problemas al ejecutar?** Ver [TROUBLESHOOTING_ARDUINO.md](../TROUBLESHOOTING_ARDUINO.md)
+
 ---
 
 ## 🎯 Funcionalidad
@@ -235,6 +237,12 @@ void loop() {
 ---
 
 ## 🔍 Diagnóstico de problemas
+
+> 📖 **[Ver guía completa de solución de problemas → TROUBLESHOOTING_ARDUINO.md](../TROUBLESHOOTING_ARDUINO.md)**
+>
+> Incluye soluciones paso a paso, verificación de conexión, código Arduino de prueba y checklist completo.
+
+---
 
 ### Síntoma: "Error abriendo COM3"
 
@@ -468,7 +476,21 @@ Ver [README_SERIAL.md](README_SERIAL.md) para el programa completo con:
 
 ---
 
-## 🚀 Siguiente paso
+## �️ ¿Problemas? Solución completa
+
+Si tienes problemas de conexión, Arduino no responde, o recibes errores:
+
+👉 **[TROUBLESHOOTING_ARDUINO.md](../TROUBLESHOOTING_ARDUINO.md)** - Guía completa con:
+
+- Soluciones paso a paso para cada error
+- Código Arduino de prueba
+- Verificación de conexión
+- Test rápidos de diagnóstico
+- Checklist completo
+
+---
+
+## �🚀 Siguiente paso
 
 Una vez que domines este programa básico, explora:
 
