@@ -17,6 +17,7 @@ C/
 │   └── serial.c
 ├── arduino/               # Comunicación Arduino simple
 │   └── arduino.c
+├── arduinoCodes/           # Códigos Arduino IDE
 ├── main.c                  # Programa básico con ejemplos fundamentales
 ├── README.md               # Este archivo
 ├── README_SQL.md           # Documentación SQL detallada
