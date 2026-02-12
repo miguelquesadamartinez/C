@@ -29,7 +29,124 @@ C/
 
 ## 🚀 Programas Disponibles
 
-### 1. **main.c** - Conceptos Fundamentales de C
+### 1. **serial.c** - Comunicación Serial/USB
+
+Programa para enviar datos a dispositivos por puerto serial tradicional o dispositivos USB (Arduino, ESP32, módulos USB, etc.).
+
+📖 **[Ver documentación completa → README_SERIAL.md](README_SERIAL.md)**
+
+**Características:**
+
+- 📡 Envío de texto por puerto COM tradicional
+- 🔌 Envío a dispositivos USB (Arduino, ESP32, adaptadores USB-Serial)
+- 🔧 Configuración de puerto serial
+- ⚙️ Velocidad estándar: 9600 baud (8N1)
+- 📋 Menú separado para Serial y USB
+- 🔌 Soporte para FTDI, CH340, CP2102
+- ℹ️ Ayuda para encontrar puertos disponibles
+- ✓ Validación de conexión
+
+**Compilar:**
+
+```powershell
+gcc serial\serial.c -o serial\serial.exe
+```
+
+**Ejecutar:**
+
+```powershell
+.\serial\serial.exe
+```
+
+**Opciones del menú:**
+
+1. **Enviar a puerto Serial** - Para puertos COM tradicionales (COM1, COM2)
+2. **Enviar a dispositivo USB** - Para Arduino, ESP32, ESP8266, adaptadores USB-Serial
+3. **Configuración avanzada** - Ajustes de velocidad (baud rate)
+4. **Ayuda** - Cómo encontrar tu puerto
+5. **Salir**
+
+**Dispositivos USB soportados:**
+
+- Arduino (Uno, Mega, Nano, etc.)
+- ESP32 / ESP8266
+- Adaptadores USB-TTL (FTDI, CH340, CP2102, PL2303)
+- Cualquier dispositivo USB a Serial
+
+💡 **Nota:** Los dispositivos USB aparecen como puertos COM virtuales en Windows (COM3, COM4, COM5, etc.)
+
+**¿Cómo encontrar mi puerto COM?**
+
+**Opción 1 - Administrador de dispositivos:**
+
+1. Abre "Administrador de dispositivos"
+2. Expande "Puertos (COM y LPT)"
+3. Busca tu dispositivo (Arduino, USB Serial, etc.)
+
+**Opción 2 - PowerShell:**
+
+```powershell
+[System.IO.Ports.SerialPort]::getportnames()
+```
+
+**Opción 3 - Arduino IDE:**
+
+- Menú: Herramientas → Puerto
+
+---
+
+### 2. **arduino.c** - Comunicación Simple con Arduino
+
+Programa minimalista y directo para enviar comandos a Arduino sin menús.
+
+📖 **[Ver documentación completa → README_ARDUINO.md](README_ARDUINO.md)**
+
+**Características:**
+
+- 🎯 Código simple y directo
+- ⚡ Envío rápido de un carácter ('1')
+- 🔧 Hardcodeado para COM3 a 9600 baud
+- 📝 Ideal para aprender lo básico de comunicación serial
+- 🚀 Sin menús, simplemente ejecutar y enviar
+- 🔄 Lectura continua durante 2 minutos
+- ⏱️ Timestamps en cada lectura recibida
+
+**¿Cuándo usar este programa?**
+
+- Quieres un código simple para entender comunicación serial
+- Necesitas enviar un comando rápido sin configuración
+- Estás aprendiendo cómo funciona la API de Windows para serial
+- Quieres monitorear respuestas del Arduino en tiempo real
+
+**Compilar:**
+
+```powershell
+gcc arduino\arduino.c -o arduino\arduino.exe
+```
+
+**Ejecutar:**
+
+```powershell
+.\arduino\arduino.exe
+```
+
+**⚙️ Personalizar:**
+
+Para cambiar el puerto o el dato a enviar, edita `arduino/arduino.c`:
+
+```c
+hSerial = CreateFile("COM3", ...);          // Cambiar "COM3" por tu puerto
+char data = '1';                             // Cambiar '1' por tu comando
+```
+
+**Diferencia con serial.c:**
+
+- `arduino.c`: Simple, directo, sin menús. Un solo comando hardcodeado. Lectura continua por 2 minutos.
+- `serial.c`: Menú completo, múltiples opciones, configuración interactiva.
+
+---
+
+### 3. **main.c** - Conceptos Fundamentales de C
 
 Programa educativo que demuestra:
 
@@ -52,7 +169,7 @@ gcc main.c -o main.exe
 
 ---
 
-### 2. **test_sql.c** - Conexión a SQL Server
+### 4. **test_sql.c** - Conexión a SQL Server
 
 Programa para conectarse a SQL Server y ejecutar consultas SELECT, INSERT, UPDATE, etc.
 
@@ -90,7 +207,7 @@ gcc -o db\test_sql.exe db\test_sql.c db\sql_connection.c -lodbc32
 
 ---
 
-### 3. **menu_tabla.c** - Gestor de Tablas SQL
+### 5. **menu_tabla.c** - Gestor de Tablas SQL
 
 Aplicación interactiva para crear tablas en SQL Server con un menú fácil de usar.
 
