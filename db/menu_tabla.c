@@ -486,6 +486,223 @@ void borrarCampoDeTabla() {
     }
 }
 
+void actualizarDatosEnTabla() {
+    char tablas[MAX_CAMPOS][MAX_NOMBRE];
+    int numTablas = 0;
+    
+    printf("\n=== ACTUALIZAR DATOS EN TABLA ===\n");
+    
+    // Listar tablas disponibles
+    listarTablas(tablas, &numTablas);
+    
+    if (numTablas == 0) {
+        printf("\nNo hay tablas disponibles.\n");
+        return;
+    }
+    
+    // Seleccionar tabla
+    printf("\nSelecciona el número de tabla (0 para cancelar): ");
+    int seleccion;
+    scanf("%d", &seleccion);
+    limpiarBuffer();
+    
+    if (seleccion == 0) {
+        printf("\n✗ Operación cancelada.\n");
+        return;
+    }
+    
+    if (seleccion < 1 || seleccion > numTablas) {
+        printf("\n✗ Selección inválida.\n");
+        return;
+    }
+    
+    char *tablaSeleccionada = tablas[seleccion - 1];
+    printf("\n✓ Tabla seleccionada: %s\n", tablaSeleccionada);
+    
+    // Obtener columnas de la tabla
+    ColumnaInfo columnas[MAX_CAMPOS];
+    int numColumnas = 0;
+    
+    if (!obtenerColumnasTabla(tablaSeleccionada, columnas, &numColumnas)) {
+        return;
+    }
+    
+    // Buscar campo ID (normalmente el primero o con nombre 'id')
+    char campoID[MAX_NOMBRE];
+    strcpy(campoID, columnas[0].nombre); // Por defecto el primer campo
+    
+    // Mostrar todos los campos para elegir para la busqueda del registro a actualizar
+    printf("\n=== CAMPOS DE LA TABLA ===\n");
+    for (int i = 0; i < numColumnas; i++) {
+        printf("%d. %s\n", i + 1, columnas[i].nombre);
+    }
+    printf("==========================\n");
+    printf("\nSelecciona el id del número del campo de busqueda: ");
+    int campoSel;
+    scanf("%d", &campoSel);
+    limpiarBuffer();
+    
+    if (campoSel < 1 || campoSel > numColumnas) {
+        printf("\n✗ Selección inválida.\n");
+        return;
+    }
+    strcpy(campoID, columnas[campoSel - 1].nombre);
+    
+    // Pedir el valor del ID a actualizar
+    printf("\nIngresa el valor de %s del registro a actualizar: ", campoID);
+    char valorID[500];
+    fgets(valorID, sizeof(valorID), stdin);
+    valorID[strcspn(valorID, "\n")] = 0;
+    
+    if (strlen(valorID) == 0) {
+        printf("\n✗ Valor inválido.\n");
+        return;
+    }
+    
+    // Obtener el registro actual
+    char querySelect[MAX_QUERY];
+    sprintf(querySelect, "SELECT * FROM %s WHERE %s = ", tablaSeleccionada, campoID);
+    
+    // Determinar si el ID necesita comillas
+    int idEsTexto = 0;
+    for (int i = 0; i < numColumnas; i++) {
+        if (strcmp(columnas[i].nombre, campoID) == 0) {
+            if (strstr(columnas[i].tipo, "char") != NULL || 
+                strstr(columnas[i].tipo, "text") != NULL) {
+                idEsTexto = 1;
+            }
+            break;
+        }
+    }
+    
+    if (idEsTexto) {
+        strcat(querySelect, "'");
+        strcat(querySelect, valorID);
+        strcat(querySelect, "'");
+    } else {
+        strcat(querySelect, valorID);
+    }
+    
+    // Ejecutar SELECT
+    SQLResult *resultado = ejecutarConsulta(&conexion, querySelect);
+    
+    if (resultado == NULL || resultado->numRows == 0) {
+        printf("\n✗ No se encontró ningún registro con %s = %s\n", campoID, valorID);
+        if (resultado) liberarResultado(resultado);
+        return;
+    }
+    
+    printf("\n=== DATOS ACTUALES DEL REGISTRO ===\n");
+    for (int i = 0; i < numColumnas; i++) {
+        printf("[%s]: %s\n", columnas[i].nombre, resultado->data[0][i]);
+    }
+    printf("===================================\n\n");
+    
+    // Confirmación antes de editar
+    printf("¿Desea actualizar este registro? (1=Sí, 0=Cancelar): ");
+    int confirmar;
+    scanf("%d", &confirmar);
+    limpiarBuffer();
+    
+    if (confirmar != 1) {
+        printf("\n✗ Operación cancelada.\n");
+        liberarResultado(resultado);
+        return;
+    }
+    
+    // Editar campos (excepto el campo ID)
+    printf("\n--- FORMULARIO DE ACTUALIZACIÓN ---\n");
+    printf("(Presiona Enter para mantener el valor actual)\n\n");
+    
+    char nuevosValores[MAX_CAMPOS][500];
+    int cambiarValor[MAX_CAMPOS];
+    
+    for (int i = 0; i < numColumnas; i++) {
+        // Saltar el campo ID
+        if (strcmp(columnas[i].nombre, campoID) == 0) {
+            cambiarValor[i] = 0;
+            continue;
+        }
+        
+        printf("[%s] (%s)\n", columnas[i].nombre, columnas[i].tipo);
+        printf("Valor actual: %s\n", resultado->data[0][i]);
+        printf("Nuevo valor: ");
+        
+        fgets(nuevosValores[i], sizeof(nuevosValores[i]), stdin);
+        nuevosValores[i][strcspn(nuevosValores[i], "\n")] = 0;
+        
+        if (strlen(nuevosValores[i]) == 0) {
+            cambiarValor[i] = 0;
+            printf("  → Mantener valor actual\n");
+        } else {
+            cambiarValor[i] = 1;
+        }
+        
+        printf("\n");
+    }
+    
+    // Construir sentencia UPDATE
+    char queryUpdate[MAX_QUERY];
+    sprintf(queryUpdate, "UPDATE %s SET ", tablaSeleccionada);
+    
+    int primerCambio = 1;
+    for (int i = 0; i < numColumnas; i++) {
+        if (strcmp(columnas[i].nombre, campoID) == 0) continue;
+        if (!cambiarValor[i]) continue;
+        
+        if (!primerCambio) {
+            strcat(queryUpdate, ", ");
+        }
+        
+        strcat(queryUpdate, columnas[i].nombre);
+        strcat(queryUpdate, " = ");
+        
+        // Determinar si necesita comillas
+        if (strstr(columnas[i].tipo, "char") != NULL || 
+            strstr(columnas[i].tipo, "text") != NULL ||
+            strstr(columnas[i].tipo, "date") != NULL) {
+            strcat(queryUpdate, "'");
+            strcat(queryUpdate, nuevosValores[i]);
+            strcat(queryUpdate, "'");
+        } else {
+            strcat(queryUpdate, nuevosValores[i]);
+        }
+        
+        primerCambio = 0;
+    }
+    
+    // Agregar WHERE
+    strcat(queryUpdate, " WHERE ");
+    strcat(queryUpdate, campoID);
+    strcat(queryUpdate, " = ");
+    if (idEsTexto) {
+        strcat(queryUpdate, "'");
+        strcat(queryUpdate, valorID);
+        strcat(queryUpdate, "'");
+    } else {
+        strcat(queryUpdate, valorID);
+    }
+    
+    liberarResultado(resultado);
+    
+    if (primerCambio) {
+        printf("\n✗ No se realizaron cambios.\n");
+        return;
+    }
+    
+    printf("=== SENTENCIA SQL ===\n");
+    printf("%s\n", queryUpdate);
+    printf("=====================\n\n");
+    
+    // Ejecutar UPDATE
+    printf("Ejecutando actualización...\n");
+    if (ejecutarComando(&conexion, queryUpdate)) {
+        printf("\n✓ ¡Registro actualizado exitosamente!\n\n");
+    } else {
+        printf("\n✗ Error al actualizar el registro.\n\n");
+    }
+}
+
 void crearTabla() {
     char nombreTabla[MAX_NOMBRE];
     Campo campos[MAX_CAMPOS];
@@ -651,7 +868,8 @@ int main() {
         printf("2. Agregar campo a tabla existente\n");
         printf("3. Borrar campo de tabla existente\n");
         printf("4. Insertar datos en tabla existente\n");
-        printf("5. Salir\n");
+        printf("5. Actualizar datos en tabla existente\n");
+        printf("6. Salir\n");
         printf("\nSelecciona una opción: ");
         
         if (scanf("%d", &opcion) != 1) {
@@ -675,13 +893,16 @@ int main() {
                 insertarDatosEnTabla();
                 break;
             case 5:
+                actualizarDatosEnTabla();
+                break;
+            case 6:
                 printf("\n¡Hasta luego!\n");
                 break;
             default:
                 printf("\nOpción inválida. Intenta de nuevo.\n");
         }
         
-    } while (opcion != 5);
+    } while (opcion != 6);
     
     // Desconectar
     desconectarSQL(&conexion);
