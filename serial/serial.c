@@ -248,6 +248,8 @@ void configurarAvanzada() {
 }
 
 int main() {
+    system("chcp 65001 > nul");
+
     int opcion;
     
     printf("╔═══════════════════════════════════════╗\n");

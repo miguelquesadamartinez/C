@@ -2,6 +2,8 @@
 #include <stdio.h>
 
 int main() {
+    system("chcp 65001 > nul");
+
     HANDLE hSerial;
     DCB dcbSerialParams = {0};
     COMMTIMEOUTS timeouts = {0};
@@ -80,7 +82,7 @@ int main() {
     printf("Esperando datos del Arduino...\n\n");
     
     ULONGLONG startTime = GetTickCount64();
-    ULONGLONG duration = 120000;  // 2 minutos en milisegundos
+    ULONGLONG duration = 30000;  // 30 segundos en milisegundos
     ULONGLONG elapsedTime = 0;
     int totalLecturas = 0;
     

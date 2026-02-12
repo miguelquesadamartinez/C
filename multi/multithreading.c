@@ -41,6 +41,8 @@ DWORD WINAPI generarNumerosAleatorios(LPVOID lpParam) {
 }
 
 int main() {
+    system("chcp 65001 > nul");
+
     printf("=================================================\n");
     printf("  EJEMPLO DE MULTITHREADING EN C (Windows API)\n");
     printf("=================================================\n\n");
