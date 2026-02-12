@@ -253,7 +253,7 @@ int main() {
     int opcion;
     
     printf("╔═══════════════════════════════════════╗\n");
-    printf("║   COMUNICACIÓN PUERTO SERIAL/USB     ║\n");
+    printf("║    COMUNICACIÓN PUERTO SERIAL/USB     ║\n");
     printf("╚═══════════════════════════════════════╝\n");
     
     do {
