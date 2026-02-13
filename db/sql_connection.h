@@ -15,21 +15,21 @@ typedef struct {
 
 // Estructura para almacenar resultados
 typedef struct {
-    char ***data;      // Array 2D de strings [fila][columna]
-    int numRows;       // Número de filas
-    int numCols;       // Número de columnas
-    char **colNames;   // Nombres de las columnas
+    wchar_t ***data;      // Array 2D de wide strings [fila][columna]
+    int numRows;         // Número de filas
+    int numCols;         // Número de columnas
+    wchar_t **colNames;  // Nombres de las columnas
 } SQLResult;
 
 // Funciones de conexión
-int conectarSQL(SQLConnection *conn, const char *server, const char *database, 
-                const char *username, const char *password);
-int conectarSQLTrusted(SQLConnection *conn, const char *server, const char *database);
+int conectarSQL(SQLConnection *conn, const wchar_t *server, const wchar_t *database, 
+                const wchar_t *username, const wchar_t *password);
+int conectarSQLTrusted(SQLConnection *conn, const wchar_t *server, const wchar_t *database);
 void desconectarSQL(SQLConnection *conn);
 
 // Funciones de consulta
-SQLResult* ejecutarConsulta(SQLConnection *conn, const char *query);
-int ejecutarComando(SQLConnection *conn, const char *comando);
+SQLResult* ejecutarConsulta(SQLConnection *conn, const wchar_t *query);
+int ejecutarComando(SQLConnection *conn, const wchar_t *comando);
 
 // Funciones de utilidad
 void liberarResultado(SQLResult *result);
