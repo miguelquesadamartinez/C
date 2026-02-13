@@ -29,7 +29,49 @@ C/
 
 ## 🚀 Programas Disponibles
 
-### 1. **serial.c** - Comunicación Serial/USB
+### 1. **impresora/imprimir_cadena.c** - Imprimir texto en impresora de Windows
+
+Programa que lista las impresoras disponibles en el sistema y permite seleccionar una para imprimir una cadena de texto usando la API de Windows.
+
+**Características:**
+
+- 🖨️ Lista todas las impresoras instaladas
+- 📝 Permite seleccionar la impresora por número
+- 📄 Imprime una cadena de texto en la posición (100, 100)
+- ⚙️ Uso de la API de Windows (EnumPrinters, CreateDC, TextOut)
+
+**Compilar:**
+
+```powershell
+gcc -DUNICODE -D_UNICODE impresora/imprimir_cadena.c -o impresora/imprimir_cadena.exe -lgdi32 -lwinspool
+```
+
+**Ejecutar:**
+
+```powershell
+./impresora/imprimir_cadena.exe
+```
+
+**Flujo de uso:**
+
+1. El programa muestra un listado numerado de impresoras disponibles.
+2. El usuario ingresa el número de la impresora deseada.
+3. Se envía la cadena de texto a la impresora seleccionada.
+4. Mensaje de éxito o error según el resultado.
+
+**Ejemplo de salida:**
+
+```
+Impresoras disponibles:
+1. Microsoft Print to PDF
+2. HP LaserJet
+Seleccione el número de la impresora: 2
+Impresión enviada correctamente.
+```
+
+---
+
+### 2. **serial.c** - Comunicación Serial/USB
 
 Programa para enviar datos a dispositivos por puerto serial tradicional o dispositivos USB (Arduino, ESP32, módulos USB, etc.).
 
@@ -49,7 +91,7 @@ Programa para enviar datos a dispositivos por puerto serial tradicional o dispos
 **Compilar:**
 
 ```powershell
-gcc serial\serial.c -o serial\serial.exe
+gcc -o serial/serial.exe serial/serial.c includes/miguel.c
 ```
 
 **Ejecutar:**
@@ -95,7 +137,7 @@ gcc serial\serial.c -o serial\serial.exe
 
 ---
 
-### 2. **arduino.c** - Comunicación Simple con Arduino
+### 3. **arduino.c** - Comunicación Simple con Arduino
 
 Programa minimalista y directo para enviar comandos a Arduino sin menús.
 
@@ -146,7 +188,7 @@ char data = '1';                             // Cambiar '1' por tu comando
 
 ---
 
-### 3. **multithreading.c** - Multithreading con Números Aleatorios
+### 4. **multithreading.c** - Multithreading con Números Aleatorios
 
 Programa educativo que demuestra el uso de múltiples threads (hilos) en C usando la API de Windows.
 
@@ -204,7 +246,7 @@ Creando 4 threads...
 
 ---
 
-### 4. **test_sql.c** - Conexión a SQL Server
+### 5. **test_sql.c** - Conexión a SQL Server
 
 Programa para conectarse a SQL Server y ejecutar consultas SELECT, INSERT, UPDATE, etc.
 
@@ -231,7 +273,7 @@ const char *baseDatos = "TestDB";        // Tu base de datos
 **Compilar:**
 
 ```powershell
-gcc -o db\test_sql.exe db\test_sql.c db\sql_connection.c -lodbc32
+gcc -o db\test_sql.exe db\test_sql.c db\sql_connection.c db\miguel.c -lodbc32
 ```
 
 **Ejecutar:**
@@ -242,7 +284,7 @@ gcc -o db\test_sql.exe db\test_sql.c db\sql_connection.c -lodbc32
 
 ---
 
-### 5. **menu_tabla.c** - Gestor de Tablas SQL
+### 6. **menu_tabla.c** - Gestor de Tablas SQL
 
 Aplicación interactiva para crear tablas en SQL Server con un menú fácil de usar.
 
@@ -268,12 +310,16 @@ const char *baseDatos = "TestDB";
 **Compilar:**
 
 ```powershell
+# Compilación normal:
 gcc -o db\menu_tabla.exe db\menu_tabla.c db\sql_connection.c -lodbc32
+# Compilación en modo Unicode:
+gcc -Iincludes -DUNICODE -D_UNICODE -o db/menu_tabla_unicode.exe db/menu_tabla_unicode.c db/sql_connection_unicode.c includes/miguel.c -lodbc32
 ```
 
 **Ejecutar:**
 
 ```powershell
+.\db\menu_tabla_unicode.exe
 .\db\menu_tabla.exe
 ```
 
@@ -287,7 +333,7 @@ gcc -o db\menu_tabla.exe db\menu_tabla.c db\sql_connection.c -lodbc32
 
 ---
 
-### 4. **serial.c** - Comunicación Serial/USB
+### 7. **serial.c** - Comunicación Serial/USB
 
 Programa para enviar datos a dispositivos por puerto serial tradicional o dispositivos USB (Arduino, ESP32, módulos USB, etc.).
 
@@ -353,7 +399,7 @@ gcc serial\serial.c -o serial\serial.exe
 
 ---
 
-### 5. **arduino.c** - Comunicación Simple con Arduino
+### 8. **arduino.c** - Comunicación Simple con Arduino
 
 Programa minimalista y directo para enviar comandos a Arduino sin menús.
 
@@ -458,25 +504,6 @@ desconectarSQL(&conn);
 4. **Arduino / Dispositivos USB** (opcional, para serial.c y arduino.c)
    - Arduino IDE: https://www.arduino.cc/en/software
    - Drivers USB-Serial (CH340, FTDI) si es necesario
-
----
-
-## 🛠️ Compilación Rápida
-
-### Todos los programas a la vez:
-
-```powershell
-# Programa básico
-gcc main.c -o main.exe
-
-# Programas SQL (requieren sql_connection.c)
-gcc -o db\test_sql.exe db\test_sql.c db\sql_connection.c -lodbc32
-gcc -o db\menu_tabla.exe db\menu_tabla.c db\sql_connection.c -lodbc32
-
-# Comunicación serial/USB
-gcc serial\serial.c -o serial\serial.exe
-gcc arduino\arduino.c -o arduino\arduino.exe
-```
 
 ---
 
